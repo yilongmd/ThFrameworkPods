@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.platform     = :ios, "7.0"
   s.ios.deployment_target = "7.0"
   s.source       = { :git => "https://github.com/yilongmd/ThFrameworkPods.git", :tag => s.version}
-  s.source_files  = 'ThFrameworkPods/framework/*.{h,m}'
+  s.source_files  = 'framework/*.{h,m}'
   s.requires_arc = true
    s.frameworks = 'Foundation', 'CoreGraphics', 'UIKit'
 end
