@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "ThFrameworkPods"
-  s.version      = "1.0.3"
+  s.version      = "0.1.2"
   s.summary      = "a common framework for the team."
 
   s.homepage     = "https://github.com/yilongmd/ThFramework.git"
@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/yilongmd/ThFramework.git", :tag => s.version}
   s.source_files  = 'ThFrameworkPods/framework/*.{h,m}'
   s.requires_arc = true
-  s.dependency "SSToolkit", "~> 2.0.0"
+  #s.dependency "SSToolkit", "~> 2.0.0"
   s.dependency "JSONModel", "~> 1.2.0"
   s.dependency "KVOController", "~> 1.1.0"
   s.dependency "ReactiveCocoa", "~> 2.5"
