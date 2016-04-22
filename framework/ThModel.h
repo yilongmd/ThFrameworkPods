@@ -4,9 +4,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "JSONModel.h"
+//#import "JSONModel.h"
 #import "ThMacro.h"
-
+#import <JSONModel/JSONModel.h>
 
 //Model用户存放下载的数据,和原始初始化的数据
 //应拥有一键缓存
