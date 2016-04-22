@@ -4,7 +4,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "FBKVOController.h"
+//#import "FBKVOController.h"
+
+@class FBKVOController;
 
 
 @interface ThKOVController : FBKVOController
