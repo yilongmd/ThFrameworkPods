@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.author       = { "yilongmd" => "317616660@qq.com" }
   s.platform     = :ios, "7.0"
   s.ios.deployment_target = "7.0"
-  s.source       = { :git => "https://github.com/yilongmd/ThFramework.git", :tag => s.version}
+  s.source       = { :git => "https://github.com/yilongmd/ThFramework.git", :tag => "0.1.3"}
   s.source_files  = 'framework/**/*'
   s.public_header_files = 'framework/**/*.h'
   s.requires_arc = true
