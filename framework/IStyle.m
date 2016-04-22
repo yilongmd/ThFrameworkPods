@@ -17,7 +17,7 @@
 #import "ICssDecl.h"
 #import "ICssBlock.h"
 #import "ICssRule.h"
-#import "PrefixHeader.pch"
+//#import "PrefixHeader.pch"
 
 @implementation IStyleBorder
 
@@ -569,7 +569,7 @@
 		needsLayout = YES;
 		_top = [v floatValue];
 	}else if([k isEqualToString:@"www"]){
-		log_debug(@"www for c*ui");
+//		log_debug(@"www for c*ui");
 	}
 }
 

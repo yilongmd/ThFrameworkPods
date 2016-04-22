@@ -13,7 +13,8 @@
 #import "IStyleInternal.h"
 #import "IPullRefresh.h"
 #import "IRefreshControl.h"
-#import "PrefixHeader.pch"
+#import "IKit.h"
+//#import "PrefixHeader.pch"
 
 @interface ITable() <UIScrollViewDelegate, IPullRefreshDelegate>{
 	NSUInteger _visibleCellIndexMin;

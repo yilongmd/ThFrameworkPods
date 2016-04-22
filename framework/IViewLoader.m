@@ -23,7 +23,8 @@
 #import "INSXmlViewLoader.h"
 #import "IDTHTMLViewLoader.h"
 #import "IResourceMananger.h"
-#import "PrefixHeader.pch"
+#import "IKit.h"
+//#import "PrefixHeader.pch"
 
 typedef enum{
 	ParseInit,
@@ -185,7 +186,7 @@ typedef enum{
 	IImage *img = [[IImage alloc] init];
 	if(src){
 		if([IKitUtil isDataURI:src]){
-			log_debug(@"load image element from data URI");
+//			log_debug(@"load image element from data URI");
 			img.image = [IKitUtil loadImageFromDataURI:src];
 		}else{
 			src = [IKitUtil buildPath:_basePath src:src];

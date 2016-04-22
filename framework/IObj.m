@@ -10,7 +10,8 @@
 #import "IObj.h"
 #import "IDict.h"
 #import "Text.h"
-#import "PrefixHeader.pch"
+#import "IKit.h"
+//#import "PrefixHeader.pch"
 
 typedef enum{
 	IObjTypeNull,

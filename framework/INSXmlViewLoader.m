@@ -9,7 +9,8 @@
 
 #import "INSXmlViewLoader.h"
 #import "IViewLoader.h"
-#import "PrefixHeader.pch"
+#import "IKit.h"
+//#import "PrefixHeader.pch"
 
 @implementation INSXmlViewLoader
 

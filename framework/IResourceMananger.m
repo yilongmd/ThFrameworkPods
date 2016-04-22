@@ -11,7 +11,8 @@
 #import "IResourceMananger.h"
 #import "IKitUtil.h"
 #import "IStyleSheet.h"
-#import "PrefixHeader.pch"
+#import "IKit.h"
+//#import "PrefixHeader.pch"
 
 @interface IResourceMananger (){
 }

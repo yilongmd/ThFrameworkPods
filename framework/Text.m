@@ -9,7 +9,8 @@
 
 #import <CommonCrypto/CommonDigest.h>
 #import "Text.h"
-#import "PrefixHeader.pch"
+#import "IKit.h"
+//#import "PrefixHeader.pch"
 
 NSString *json_encode(id obj){
 	if([obj isKindOfClass:[NSString class]]){

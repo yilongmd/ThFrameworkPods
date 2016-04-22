@@ -15,7 +15,8 @@
 #import "IViewLoader.h"
 #import "IStyleSheet.h"
 #import "ICssRule.h"
-#import "PrefixHeader.pch"
+#import "IKit.h"
+//#import "PrefixHeader.pch"
 
 @interface IView (){
 	id _data;

@@ -12,7 +12,8 @@
 #import "IViewInternal.h"
 #import "IStyleInternal.h"
 #import "ICssRule.h"
-#import "PrefixHeader.pch"
+#import "IKit.h"
+//#import "PrefixHeader.pch"
 
 @interface IStyleSheet(){
 	NSMutableArray *_rules;
@@ -115,7 +116,7 @@
 	for(ICssRule *rule in _rules){
 		log_debug(@"%10d: %@", rule.weight, rule);
 	}
-	log_debug(@">>>>>>>>>>");
+//	log_debug(@">>>>>>>>>>");
 }
 
 - (void)setCss:(NSString *)css forSelector:(NSString *)selector baseUrl:(NSString *)baseUrl{
