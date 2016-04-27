@@ -16,7 +16,12 @@
 @interface ThActivity : ITable
 
 //子类对象
-@model(id ,me);
+//@model(id ,me);
+//用来下载HTML和CSS的Url
+@prop_strong(NSString *,strTemplateUrl);
+@prop_strong(NSString *,strTemplate);
+@prop_assign(BOOL,bDebugRefresh);
+
 
 /**
  *  Controller 创建
@@ -52,11 +57,22 @@
 -(void) onDestroy;
 
 
+
 /**
  *  打开一个模态viewController
  *
  *  @param viewController viewController description
  */
+- (NSString *)loadTemplate;
+
+- (NSString *)loadTemplateUrl;
+
+- (void)LoadUI;
+
+- (void)loadUI;
+
+- (void)onAsyncUI;
+
 /**
  *  打开一个模态viewController
  *

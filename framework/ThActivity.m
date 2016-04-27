@@ -9,6 +9,9 @@
 
 #import "ThActivity.h"
 #import "MBProgressHUD.h"
+#import "IViewLoader.h"
+#import "ThConfig.h"
+#import "IResourceMananger.h"
 
 @interface ThActivity ()
 
@@ -99,6 +102,48 @@
 }
 
 -(void) onDestroy {
+
+}
+
+-(NSString *) loadTemplate {
+    return @"";
+}
+
+-(NSString *) loadTemplateUrl {
+    return @"";
+}
+
+-(void) loadUI {
+    if (_bDebugRefresh) {
+        [[UIApplication sharedApplication] setApplicationSupportsShakeToEdit:YES];
+
+        [self becomeFirstResponder];
+    }
+    __weak typeof(self) me = self;
+    NSString *strTemplateUrl = [ThConfig instance].strTemplateUrl;
+    strTemplateUrl = [NSString stringWithFormat:@"%@%@.xml", strTemplateUrl, [self loadTemplate]];
+//    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
+    [IResourceMananger sharedMananger].enableCssCache = NO;
+    [IViewLoader loadUrl:strTemplateUrl callback:^(IView *view) {
+        [me clear];
+        [me addIViewRow:view];
+        [me reload];
+        [self onAsyncUI];
+//        [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
+    }];
+}
+
+-(void) onAsyncUI {
+
+}
+
+- (void) motionBegan:(UIEventSubtype)motion withEvent:(UIEvent *)event
+
+{
+    //检测到摇动
+    if (_bDebugRefresh) {
+        [self loadUI];
+    }
 
 }
 
