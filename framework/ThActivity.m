@@ -128,12 +128,12 @@
         [me clear];
         [me addIViewRow:view];
         [me reload];
-        [self onAsyncUI];
+        [self onAsyncUI:view];
 //        [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
     }];
 }
 
--(void) onAsyncUI {
+-(void) onAsyncUI:(IView *) view {
 
 }
 

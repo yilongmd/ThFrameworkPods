@@ -71,7 +71,9 @@
 
 - (void)loadUI;
 
-- (void)onAsyncUI;
+//- (void)onAsyncUI;
+
+- (void)onAsyncUI:(IView *)view;
 
 /**
  *  打开一个模态viewController
