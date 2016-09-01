@@ -17,7 +17,6 @@
 #import "ICssDecl.h"
 #import "ICssBlock.h"
 #import "ICssRule.h"
-//#import "PrefixHeader.pch"
 
 @implementation IStyleBorder
 
@@ -145,10 +144,6 @@
 	return _resizeType == IStyleResizeBoth;
 }
 
-- (void)setResizeWidth{
-	_resizeType |= IStyleResizeWidth;
-}
-
 - (CGSize)size{
 	return CGSizeMake(self.w, self.h);
 }
@@ -156,41 +151,30 @@
 - (void)setSize:(CGSize)size{
 	[self setWidth:size.width];
 	[self setHeight:size.height];
-	[_view setNeedsLayout];
 }
 
 - (CGFloat)width{
 	return _w;
 }
 
-- (void)setWidth:(CGFloat)w{
-	_w = w;
-	_ratioWidth = 0;
-	_resizeType &= ~IStyleResizeWidth;
-	[_view setNeedsLayout];
-}
-
 - (CGFloat)height{
 	return _h;
 }
 
+- (void)setWidth:(CGFloat)w{
+	[self set:[NSString stringWithFormat:@"width: %f", w]];
+}
+
 - (void)setHeight:(CGFloat)h{
-	_h = h;
-	_ratioHeight = 0;
-	_resizeType &= ~IStyleResizeHeight;
-	[_view setNeedsLayout];
+	[self set:[NSString stringWithFormat:@"height: %f", h]];
 }
 
 - (void)setRatioWidth:(CGFloat)rw{
-	_w = 0;
-	_ratioWidth = rw;
-	_resizeType &= ~IStyleResizeWidth;
+	[self set:[NSString stringWithFormat:@"width: %f%%", rw*100]];
 }
 
 - (void)setRatioHeight:(CGFloat)rh{
-	_h = 0;
-	_ratioHeight = rh;
-	_resizeType &= ~IStyleResizeHeight;
+	[self set:[NSString stringWithFormat:@"height: %f%%", rh*100]];
 }
 
 - (CGFloat)ratioWidth{
@@ -287,17 +271,17 @@
 	//log_debug(@"%s %@", __func__, clz);
 	clz = [clz lowercaseString];
 	[_classes addObject:clz];
-	if(_view.inheritedStyleSheet){
+//	if(_view.inheritedStyleSheet){
 		[self renderAllCss];
-	}
+//	}
 }
 
 - (void)removeClass:(NSString *)clz{
 	clz = [clz lowercaseString];
 	[_classes removeObject:clz];
-	if(_view.inheritedStyleSheet){
+//	if(_view.inheritedStyleSheet){
 		[self renderAllCss];
-	}
+//	}
 }
 
 - (BOOL)hasClass:(NSString *)clz{
@@ -342,33 +326,40 @@
 	}
 }
 
+- (void)renderCssFromStylesheet:(IStyleSheet *)sheet{
+	for(ICssRule *rule in sheet.rules){
+		//log_debug(@"RULE: %@", rule);
+		if([rule matchView:_view]){
+			//log_debug(@" %@#%@ match?: %d", _tagName, self.view.vid, [rule matchView:_view]);
+			for(ICssDecl *decl in rule.declBlock.decls){
+				//log_debug(@"  %@ %@ %@: %@", decl, decl.key, decl.key, decl.val);
+				[self applyDecl:decl baseUrl:rule.declBlock.baseUrl];
+			}
+		}
+	}
+}
+
 - (void)renderAllCss{
+	// 1. builtin(default) css
+	// 2. stylesheet(by style tag) css
+	// 3. inline css
+	// $: dynamically set css
+	
 	//log_debug(@"%@ %@ %s", _view.name, _tagName, __func__);
 	[self reset];
+
+	// 1. built-in css
+	[self renderCssFromStylesheet:[IStyleSheet builtin]];
 	
-	// 对于手工创建的控件, 加上对 stylesheet 的引用
-	if(_cssBlock.decls.count == 0){
-		[_cssBlock addKey:@"@" value:@""];
+	// 2. stylesheet css
+	IStyleSheet *sheet = _view.inheritedStyleSheet;
+	if(sheet){
+		[self renderCssFromStylesheet:sheet];
 	}
 	
+	// 3. inline css
 	for(ICssDecl *decl in _cssBlock.decls){
-		if([decl.key isEqualToString:@"@"]){
-			IStyleSheet *sheet = _view.inheritedStyleSheet;
-			if(sheet){
-				for(ICssRule *rule in sheet.rules){
-					//log_debug(@"RULE: %@", rule);
-					if([rule matchView:_view]){
-						//log_debug(@" %@#%@ match?: %d", _tagName, self.view.vid, [rule matchView:_view]);
-						for(ICssDecl *decl in rule.declBlock.decls){
-							//log_debug(@"  %@ %@ %@: %@", decl, decl.key, decl.key, decl.val);
-							[self applyDecl:decl baseUrl:rule.declBlock.baseUrl];
-						}
-					}
-				}
-			}
-		}else{
-			[self applyDecl:decl baseUrl:_cssBlock.baseUrl];
-		}
+		[self applyDecl:decl baseUrl:_cssBlock.baseUrl];
 	}
 	
 	[_view setNeedsDisplay];
@@ -431,12 +422,15 @@
 			_resizeType |= IStyleResizeWidth;
 			return;
 		}
+		_resizeType &= ~IStyleResizeWidth;
 		
 		float f = [v floatValue];
 		if([v rangeOfString:@"%"].location == NSNotFound){
-			[self setWidth:f];
+			_w = f;
+			_ratioWidth = 0;
 		}else{
-			[self setRatioWidth:f/100];
+			_w = 0;
+			_ratioWidth = f/100;
 		}
 		//log_trace(@"w = %f, ratioW = %f", self.w, self.ratioWidth);
 	}else if([k isEqualToString:@"height"]){
@@ -447,14 +441,36 @@
 			_resizeType |= IStyleResizeHeight;
 			return;
 		}
+		_resizeType &= ~IStyleResizeHeight;
 		
 		float f = [v floatValue];
 		if([v rangeOfString:@"%"].location == NSNotFound){
-			[self setHeight:f];
+			_h = f;
+			_ratioHeight = 0;
 		}else{
-			[self setRatioHeight:f/100];
+			_h = 0;
+			_ratioHeight = f/100;
 		}
 		//log_trace(@"h = %f, ratioH = %f", self.h, self.ratioH);
+	}else if([k isEqualToString:@"aspect-ratio"]){
+		needsLayout = YES;
+		if([v isEqualToString:@"auto"]){
+			_aspectRatio = 0;
+			return;
+		}
+		
+		float f = [v floatValue];
+		if([v rangeOfString:@"%"].location == NSNotFound){
+			if([v rangeOfString:@"/"].location == NSNotFound){
+				_aspectRatio = f;
+			}else{
+				NSArray *ps = [v componentsSeparatedByString:@"/"];
+				f = ((NSString *)ps[0]).floatValue / ((NSString *)ps[1]).floatValue;
+				_aspectRatio = f;
+			}
+		}else{
+			_aspectRatio = f/100;
+		}
 	}else if([k isEqualToString:@"margin"]){
 		needsLayout = YES;
 		_margin = [self parseEdge:v];
@@ -569,16 +585,13 @@
 		needsLayout = YES;
 		_top = [v floatValue];
 	}else if([k isEqualToString:@"www"]){
-//		log_debug(@"www for c*ui");
+		log_debug(@"www for c*ui");
 	}
 }
 
 - (void)parseBackground:(NSString *)v baseUrl:(NSString *)baseUrl{
-	NSMutableArray *ps = [NSMutableArray arrayWithArray:
-						  [v componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]];
-	[ps removeObject:@""];
-	
 	NSString *src = nil;
+	NSArray *ps = [IKitUtil split:v];
 	for(NSString *p in ps){
 		if([p characterAtIndex:0] == '#'){
 			_backgroundColor = [IKitUtil colorFromHex:p];
@@ -601,21 +614,19 @@
 	}
 	_backgroundImage = nil;
 	if(src){
-		if([IKitUtil isDataURI:src]){
-			_backgroundImage = [IKitUtil loadImageFromDataURI:src];
-		}else{
+		if(![IKitUtil isDataURI:src]){
 			src = [IKitUtil buildPath:baseUrl src:src];
-			//log_debug(@"%@ load background image: %@", _view.name, src);
-			IEventType event = _view.event;
-			[[IResourceMananger sharedMananger] loadImage:src callback:^(UIImage *img) {
-				// 如果在异步加载的前后, _view 状态发生了改变, 则不更新 background-image
-				// 可能有考虑不到的地方, 但先这么做吧.
-				if(event == _view.event){
-					_backgroundImage = img;
-					[_view setNeedsDisplay];
-				}
-			}];
 		}
+		//log_debug(@"%@ load background image: %@", _view.name, src);
+		IEventType event = _view.event;
+		[[IResourceMananger sharedMananger] loadImageSrc:src callback:^(UIImage *img) {
+			// 如果在异步加载的前后, _view 状态发生了改变, 则不更新 background-image
+			// 可能有考虑不到的地方, 但先这么做吧.
+			if(event == _view.event){
+				_backgroundImage = img;
+				[_view setNeedsDisplay];
+			}
+		}];
 	}
 }
 
@@ -651,9 +662,7 @@
 
 - (UIEdgeInsets)parseEdge:(NSString *)v{
 	UIEdgeInsets edge;
-	NSMutableArray *ps = [NSMutableArray arrayWithArray:
-						  [v componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]];
-	[ps removeObject:@""];
+	NSArray *ps = [IKitUtil split:v];
 	if(ps.count == 1){
 		edge.left = edge.right = edge.top = edge.bottom = [ps[0] floatValue];
 	}else if(ps.count == 2){
@@ -678,9 +687,7 @@
 	if([v isEqualToString:@"none"]){
 		return border;
 	}
-	NSMutableArray *ps = [NSMutableArray arrayWithArray:
-						  [v componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]];
-	[ps removeObject:@""];
+	NSArray *ps = [IKitUtil split:v];
 	if(ps.count > 0){
 		border.width = [ps[0] floatValue];
 	}

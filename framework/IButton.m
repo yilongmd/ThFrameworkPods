@@ -32,7 +32,6 @@
 	}
 
 	self = [super init];
-	[self.style setResizeWidth];
 	self.style.tagName = @"button";
 
 	//_btn = [[UIButton alloc] init];
@@ -81,6 +80,7 @@
 
 - (void)layout{
 	//log_debug(@"%@ %s %@", self.name, __func__, _button.titleLabel.text);
+	[super layout];
 	
 	UIFont *font = self.style.inheritedFont;
 	if(font){
@@ -98,9 +98,6 @@
 	if(self.style.resizeHeight){
 		[self.style setInnerHeight:_button.titleLabel.frame.size.height];
 	}
-
-	// 先做自定义布局, 再进行父类布局
-	[super layout];
 }
 
 - (BOOL)fireEvent:(IEventType)event{

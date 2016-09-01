@@ -23,7 +23,7 @@
 - (id)init{
 	self = [super init];
 	
-	self.style.tagName = @"label";
+	self.style.tagName = @"switch";
 	//CGRect frame = CGRectMake(0, 0, [IStyle normalFontSize] * 2, [IStyle normalFontSize]);
 	//_uiswitch = [[UISwitch alloc] initWithFrame:frame];
 	_uiswitch = [[UISwitch alloc] init];
@@ -39,10 +39,10 @@
 }
 
 - (void)layout{
+	[super layout];
 	// UISwitch is not resizable
 	[self.style setInnerWidth:_uiswitch.frame.size.width];
 	[self.style setInnerHeight:_uiswitch.frame.size.height];
-	[super layout];
 }
 
 - (void)onChange:(id)sender{

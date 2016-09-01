@@ -12,8 +12,6 @@
 #import "IViewInternal.h"
 #import "IStyleInternal.h"
 #import "ICssRule.h"
-#import "IKit.h"
-//#import "PrefixHeader.pch"
 
 @interface IStyleSheet(){
 	NSMutableArray *_rules;
@@ -21,6 +19,14 @@
 @end
 
 @implementation IStyleSheet
+
++ (IStyleSheet *)builtin{
+	static IStyleSheet *ret = nil;
+	if(ret == nil){
+		ret = [[IStyleSheet alloc] init];
+	}
+	return ret;
+}
 
 - (id)init{
 	self = [super init];
@@ -62,6 +68,10 @@
 	return ret;
 }
 
+- (void)parseCss:(NSString *)css{
+	[self parseCss:css baseUrl:nil];
+}
+
 - (void)parseCss:(NSString *)css baseUrl:(NSString *)baseUrl{
 	css = [self stripComment:css];
 	if(css.length == 0){
@@ -75,7 +85,7 @@
 			break;
 		}
 		NSString *selector = [css substringWithRange:NSMakeRange(searchRange.location, srange.location - searchRange.location)];
-		selector = [selector stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+		selector = [IKitUtil trim:selector];
 
 		searchRange.location = srange.location + srange.length;
 		searchRange.length = css.length - searchRange.location;
@@ -116,7 +126,7 @@
 	for(ICssRule *rule in _rules){
 		log_debug(@"%10d: %@", rule.weight, rule);
 	}
-//	log_debug(@">>>>>>>>>>");
+	log_debug(@">>>>>>>>>>");
 }
 
 - (void)setCss:(NSString *)css forSelector:(NSString *)selector baseUrl:(NSString *)baseUrl{
